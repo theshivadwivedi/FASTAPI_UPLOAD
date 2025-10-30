@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Upload App</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    header h1 {
+      color: #2b2b2b;
+      margin-bottom: 1rem;
+    }
+
+    .container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 400px;
+      max-width: 90%;
+    }
+
+    input[type="file"] {
+      display: block;
+      margin: 1rem auto;
+    }
+
+    button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      margin-top: 1rem;
+      background-color: #6c757d;
+      text-decoration: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
+    #message {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📸 Upload Your Images</h1>
+  </header>
+
+  <div class="container">
+    <form id="uploadForm">
+      <input type="file" id="files" name="files" multiple required>
+      <button type="submit">Upload</button>
+    </form>
+
+    <div id="message"></div>
+
+    <a href="/gallery" class="btn-secondary">View Gallery</a>
+  </div>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const messageDiv = document.getElementById('message');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault(); // prevent full page reload
+
+      const filesInput = document.getElementById('files');
+      const files = filesInput.files;
+
+      if (!files.length) {
+        messageDiv.innerHTML = "<p class='error'>Please select at least one image.</p>";
+        return;
+      }
+
+      // prepare form data
+      const formData = new FormData();
+      for (let file of files) {
+        formData.append("files", file);
+      }
+
+      messageDiv.innerHTML = "<p>⏳ Uploading, please wait...</p>";
+
+      try {
+        const response = await fetch("/upload/", {
+          method: "POST",
+          body: formData
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          messageDiv.innerHTML = "<p class='success'>✅ Upload successful!</p>";
+          filesInput.value = ""; // reset input
+        } else {
+          messageDiv.innerHTML = "<p class='error'>❌ Upload failed. Try again.</p>";
+        }
+      } catch (error) {
+        console.error(error);
+        messageDiv.innerHTML = "<p class='error'>⚠️ Something went wrong.</p>";
+      }
+    });
+  </script>
+</body>
+</html>

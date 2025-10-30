@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gallery</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Uploaded Gallery</h1>
+  </header>
+
+  <div class="container">
+    <div class="gallery">
+      {% for image in images %}
+        <div class="card">
+          <img src="{{ image.url }}" alt="{{ image.filename }}">
+          <p>{{ image.filename }}</p>
+        </div>
+      {% endfor %}
+    </div>
+    <p><a href="/">⬅️ Upload More</a></p>
+  </div>
+</body>
+</html>
